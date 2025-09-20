@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>北京主要景点导览</title>
+
+    <!-- 外部资源引用 -->
+    <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-100-M/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <script src="https://unpkg.com/alpinejs@3.10.5/dist/cdn.min.js" defer></script>
+
+    <style>
+        /* 自定义样式 */
+        .antique-bg {
+            background: linear-gradient(135deg, #f5f1e8 0%, #e8dcc0 100%);
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="paper" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="%23f5f1e8"/><circle cx="10" cy="10" r="0.5" fill="%23d4c4a8" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23paper)"/></svg>');
+        }
+
+        .title-font {
+            font-family: 'Noto Serif SC', serif;
+        }
+
+        .content-font {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .antique-card {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid #8b4513;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.2);
+        }
+
+        .antique-button {
+            background: linear-gradient(145deg, #8b4513, #a0522d);
+            border: 2px solid #654321;
+            color: #f5f1e8;
+            transition: all 0.3s ease;
+        }
+
+        .antique-button:hover {
+            background: linear-gradient(145deg, #a0522d, #8b4513);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
+        }
+
+        .audio-control {
+            background: linear-gradient(145deg, #4a5568, #2d3748);
+            border: 2px solid #1a202c;
+            color: #f7fafc;
+            transition: all 0.3s ease;
+        }
+
+        .audio-control:hover {
+            background: linear-gradient(145deg, #2d3748, #4a5568);
+            transform: scale(1.05);
+        }
+
+        .audio-control.playing {
+            background: linear-gradient(145deg, #38a169, #2f855a);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="antique-bg min-h-screen content-font">
+    <div x-data="app()" class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- 页面标题 -->
+        <header class="text-center mb-12 fade-in">
+            <h1 class="title-font text-4xl md:text-5xl font-bold text-amber-900 mb-4">
+                北京主要景点导览
+            </h1>
+            <p class="text-lg text-amber-800 mb-6">
+                千年古都，文化瑰宝
+            </p>
+            <div class="w-24 h-1 bg-amber-700 mx-auto rounded-full"></div>
+        </header>
+
+        <!-- 景点列表 -->
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <!-- 故宫博物院 -->
+            <div class="antique-card p-6 fade-in" style="animation-delay: 0.1s;">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="title-font text-xl font-semibold text-amber-900">
+                        🏛️ 故宫博物院
+                    </h2>
+                    <button @click="playAudio('gugong')"
+                        :class="currentAudio === 'gugong' ? 'audio-control playing' : 'audio-control'"
+                        class="px-3 py-2 rounded-full text-sm font-medium">
+                        <i :class="currentAudio === 'gugong' ? 'fas fa-pause' : 'fas fa-play'"></i>
+                    </button>
+                </div>
+
+                <div x-show="expanded === 'gugong'" x-transition class="mt-4 space-y-3">
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">📍 基本信息</h3>
+                        <p class="text-sm text-gray-700">地址：北京市东城区景山前街4号</p>
+                        <p class="text-sm text-gray-700">门票：60元（旺季）/ 40元（淡季）</p>
+                        <p class="text-sm text-gray-700">等级：AAAAA级景区</p>
+                        <p class="text-sm text-gray-700">评分：4.9分（满分5分）</p>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">🏛️ 历史渊源</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            故宫博物院，旧称紫禁城，是明清两代24位皇帝的皇宫。始建于明成祖永乐四年（1406年），永乐十八年（1420年）建成，历经明清两代，共24位皇帝在此居住和办公。
+                        </p>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">🌟 必看景点</h3>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• 太和殿：俗称"金銮殿"，故宫最高大的建筑</li>
+                            <li>• 乾清宫：皇帝日常办公和居住的地方</li>
+                            <li>• 御花园：故宫内唯一的皇家园林</li>
+                            <li>• 珍宝馆：收藏了大量珍贵文物</li>
+                            <li>• 钟表馆：展示清代宫廷钟表</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">💡 游览贴士</h3>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• 建议游览时间：3-4小时</li>
+                            <li>• 最佳游览季节：春秋两季</li>
+                            <li>• 提前在网上预约门票</li>
+                            <li>• 建议从午门进入，神武门出来</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <button @click="toggleExpanded('gugong')"
+                    class="antique-button w-full mt-4 py-2 px-4 rounded-lg font-medium">
+                    <span x-text="expanded === 'gugong' ? '收起详情' : '查看详情'"></span>
+                </button>
+            </div>
+
+            <!-- 天安门广场 -->
+            <div class="antique-card p-6 fade-in" style="animation-delay: 0.2s;">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="title-font text-xl font-semibold text-amber-900">
+                        🏛️ 天安门广场
+                    </h2>
+                    <button @click="playAudio('tiananmen')"
+                        :class="currentAudio === 'tiananmen' ? 'audio-control playing' : 'audio-control'"
+                        class="px-3 py-2 rounded-full text-sm font-medium">
+                        <i :class="currentAudio === 'tiananmen' ? 'fas fa-pause' : 'fas fa-play'"></i>
+                    </button>
+                </div>
+
+                <div x-show="expanded === 'tiananmen'" x-transition class="mt-4 space-y-3">
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">📍 基本信息</h3>
+                        <p class="text-sm text-gray-700">地址：北京市东城区东长安街</p>
+                        <p class="text-sm text-gray-700">门票：免费</p>
+                        <p class="text-sm text-gray-700">评分：4.9分（满分5分）</p>
+                        <p class="text-sm text-gray-700">开放时间：05:00-22:00（全年开放）</p>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">🏛️ 历史意义</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            天安门广场是世界上最大的城市广场，总面积44万平方米，可容纳100万人集会。1949年10月1日，毛泽东主席在这里庄严宣告中华人民共和国成立，从此天安门广场成为新中国的象征。
+                        </p>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">🌟 必看景点</h3>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• 天安门城楼：明清皇城的正门</li>
+                            <li>• 人民英雄纪念碑：高37.94米</li>
+                            <li>• 毛主席纪念堂：重要纪念场所</li>
+                            <li>• 升旗仪式：每天清晨举行</li>
+                            <li>• 中国国家博物馆：珍贵文物收藏</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">💡 游览贴士</h3>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• 建议游览时间：2-3小时</li>
+                            <li>• 升旗时间根据日出时间确定</li>
+                            <li>• 安检严格，请携带有效身份证件</li>
+                            <li>• 广场面积很大，建议穿舒适的鞋子</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <button @click="toggleExpanded('tiananmen')"
+                    class="antique-button w-full mt-4 py-2 px-4 rounded-lg font-medium">
+                    <span x-text="expanded === 'tiananmen' ? '收起详情' : '查看详情'"></span>
+                </button>
+            </div>
+
+            <!-- 天坛公园 -->
+            <div class="antique-card p-6 fade-in" style="animation-delay: 0.3s;">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="title-font text-xl font-semibold text-amber-900">
+                        🏛️ 天坛公园
+                    </h2>
+                    <button @click="playAudio('tiantan')"
+                        :class="currentAudio === 'tiantan' ? 'audio-control playing' : 'audio-control'"
+                        class="px-3 py-2 rounded-full text-sm font-medium">
+                        <i :class="currentAudio === 'tiantan' ? 'fas fa-pause' : 'fas fa-play'"></i>
+                    </button>
+                </div>
+
+                <div x-show="expanded === 'tiantan'" x-transition class="mt-4 space-y-3">
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">📍 基本信息</h3>
+                        <p class="text-sm text-gray-700">地址：北京市东城区天坛东里甲1号</p>
+                        <p class="text-sm text-gray-700">门票：10元（联票34元）</p>
+                        <p class="text-sm text-gray-700">等级：AAAAA级景区</p>
+                        <p class="text-sm text-gray-700">评分：4.9分（满分5分）</p>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">🏛️ 历史渊源</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            天坛公园是明清两代帝王祭天、祈谷和祈雨的场所，始建于明永乐十八年（1420年），是中国现存最大的古代帝王祭祀建筑群。天坛的建筑布局体现了中国古代"天人合一"的哲学思想。
+                        </p>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">🌟 必看景点</h3>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• 祈年殿：天坛的标志性建筑</li>
+                            <li>• 圜丘坛：三层圆形石台</li>
+                            <li>• 回音壁：具有奇妙的声学效果</li>
+                            <li>• 皇穹宇：存放祭天神位的地方</li>
+                            <li>• 斋宫：皇帝祭天前斋戒的地方</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">💡 游览贴士</h3>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• 建议游览时间：2-3小时</li>
+                            <li>• 最佳游览季节：春季和秋季</li>
+                            <li>• 建议购买联票，参观所有主要建筑</li>
+                            <li>• 回音壁需要多人配合才能体验</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <button @click="toggleExpanded('tiantan')"
+                    class="antique-button w-full mt-4 py-2 px-4 rounded-lg font-medium">
+                    <span x-text="expanded === 'tiantan' ? '收起详情' : '查看详情'"></span>
+                </button>
+            </div>
+
+            <!-- 北海公园 -->
+            <div class="antique-card p-6 fade-in" style="animation-delay: 0.4s;">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="title-font text-xl font-semibold text-amber-900">
+                        🌳 北海公园
+                    </h2>
+                    <button @click="playAudio('beihai')"
+                        :class="currentAudio === 'beihai' ? 'audio-control playing' : 'audio-control'"
+                        class="px-3 py-2 rounded-full text-sm font-medium">
+                        <i :class="currentAudio === 'beihai' ? 'fas fa-pause' : 'fas fa-play'"></i>
+                    </button>
+                </div>
+
+                <div x-show="expanded === 'beihai'" x-transition class="mt-4 space-y-3">
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">📍 基本信息</h3>
+                        <p class="text-sm text-gray-700">地址：北京市西城区文津街1号</p>
+                        <p class="text-sm text-gray-700">门票：20元（旺季）/ 10元（淡季）</p>
+                        <p class="text-sm text-gray-700">等级：AAAA级景区</p>
+                        <p class="text-sm text-gray-700">评分：4.9分（满分5分）</p>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">🏛️ 历史渊源</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            北海公园是中国现存最古老、最完整的皇家园林，始建于辽代，历经金、元、明、清各代修建，形成了今天的规模。北海公园以北海为中心，周围环绕着琼华岛、团城等景点。
+                        </p>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">🌟 必看景点</h3>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• 白塔：琼华岛上的标志性建筑</li>
+                            <li>• 九龙壁：中国现存最大的九龙壁</li>
+                            <li>• 静心斋：园内最精美的建筑之一</li>
+                            <li>• 团城：湖中的小岛，环境幽静</li>
+                            <li>• 五龙亭：观赏湖景的最佳位置</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">💡 游览贴士</h3>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• 建议游览时间：2-3小时</li>
+                            <li>• 最佳游览季节：春季和秋季</li>
+                            <li>• 可以乘坐游船游览北海</li>
+                            <li>• 建议结合景山公园一起游览</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <button @click="toggleExpanded('beihai')"
+                    class="antique-button w-full mt-4 py-2 px-4 rounded-lg font-medium">
+                    <span x-text="expanded === 'beihai' ? '收起详情' : '查看详情'"></span>
+                </button>
+            </div>
+
+            <!-- 王府井步行街 -->
+            <div class="antique-card p-6 fade-in" style="animation-delay: 0.5s;">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="title-font text-xl font-semibold text-amber-900">
+                        🛍️ 王府井步行街
+                    </h2>
+                    <button @click="playAudio('wangfujing')"
+                        :class="currentAudio === 'wangfujing' ? 'audio-control playing' : 'audio-control'"
+                        class="px-3 py-2 rounded-full text-sm font-medium">
+                        <i :class="currentAudio === 'wangfujing' ? 'fas fa-pause' : 'fas fa-play'"></i>
+                    </button>
+                </div>
+
+                <div x-show="expanded === 'wangfujing'" x-transition class="mt-4 space-y-3">
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">📍 基本信息</h3>
+                        <p class="text-sm text-gray-700">地址：北京市东城区王府井大街256号</p>
+                        <p class="text-sm text-gray-700">门票：免费</p>
+                        <p class="text-sm text-gray-700">评分：4.8分（满分5分）</p>
+                        <p class="text-sm text-gray-700">开放时间：全天开放</p>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">🏛️ 历史渊源</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            王府井步行街是北京最著名的商业步行街，历史悠久。相传这里曾是明代王府的井台所在地，因此得名"王府井"。经过几百年的发展，王府井从一个小集市发展成为北京最繁华的商业区之一。
+                        </p>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">🌟 必看景点</h3>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• 王府井百货大楼：商品种类齐全</li>
+                            <li>• 王府井小吃街：品尝各地美食</li>
+                            <li>• 王府井书店：北京最大的书店之一</li>
+                            <li>• 东方新天地：现代化购物中心</li>
+                            <li>• 王府井影城：现代化电影院</li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-600">
+                        <h3 class="font-semibold text-amber-800 mb-2">💡 游览贴士</h3>
+                        <ul class="text-sm text-gray-700 space-y-1">
+                            <li>• 建议游览时间：2-4小时</li>
+                            <li>• 最佳游览时间：下午和晚上</li>
+                            <li>• 小吃街人流量大，注意保管物品</li>
+                            <li>• 购物时注意比较价格</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <button @click="toggleExpanded('wangfujing')"
+                    class="antique-button w-full mt-4 py-2 px-4 rounded-lg font-medium">
+                    <span x-text="expanded === 'wangfujing' ? '收起详情' : '查看详情'"></span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 音频元素 -->
+        <audio id="gugong-audio" preload="none">
+            <source
+                src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/audio%2Feffect%2F04e1f51e8507e88f0d7bdeb594bd42fd.mp3?Expires=1754534817&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=rsWvNzOVKQCogr%2BnsY%2F%2Fxqp3JwA%3D"
+                type="audio/mpeg">
+        </audio>
+        <audio id="tiananmen-audio" preload="none">
+            <source
+                src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/audio%2Feffect%2F04e1f5299ac574cfe7f05bc339b0bd6b.mp3?Expires=1754534829&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=IT%2B%2B2J16DcMzVnF9Y8Nvk2mIlU8%3D"
+                type="audio/mpeg">
+        </audio>
+        <audio id="tiantan-audio" preload="none">
+            <source
+                src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/audio%2Feffect%2F04e1f5370cb3df78ec0a9b0167bb0e77.mp3?Expires=1754534841&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=rw4o2SRg7w0OGi5VyNR00mCGjcc%3D"
+                type="audio/mpeg">
+        </audio>
+        <audio id="beihai-audio" preload="none">
+            <source
+                src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/audio%2Feffect%2F04e1f542d03ed52aabd85f8240ee78cd.mp3?Expires=1754534853&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=CqxUWgeHCoTSkC%2BUSdM1Eh3PPXk%3D"
+                type="audio/mpeg">
+        </audio>
+        <audio id="wangfujing-audio" preload="none">
+            <source
+                src="https://minimax-algeng-chat-tts.oss-cn-wulanchabu.aliyuncs.com/audio%2Feffect%2F04e1f54c0e161eb95a09ba74ef7d195f.mp3?Expires=1754534863&OSSAccessKeyId=LTAI5tGLnRTkBjLuYPjNcKQ8&Signature=tZxbqMTKyffx2WSQqmVsplEiw%2Fo%3D"
+                type="audio/mpeg">
+        </audio>
+
+        <!-- 页脚 -->
+        <footer class="text-center mt-12 pt-8 border-t border-amber-300">
+            <p class="text-amber-700 text-sm">
+                千年古都，文化瑰宝 | 北京主要景点导览
+            </p>
+            <p class="text-amber-600 text-xs mt-2">
+                基于高德地图API数据整理，信息仅供参考
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function app() {
+            return {
+                expanded: null,
+                currentAudio: null,
+                audioElements: {},
+
+                init() {
+                    // 初始化音频元素
+                    this.audioElements = {
+                        gugong: document.getElementById('gugong-audio'),
+                        tiananmen: document.getElementById('tiananmen-audio'),
+                        tiantan: document.getElementById('tiantan-audio'),
+                        beihai: document.getElementById('beihai-audio'),
+                        wangfujing: document.getElementById('wangfujing-audio')
+                    };
+
+                    // 监听音频结束事件
+                    Object.values(this.audioElements).forEach(audio => {
+                        audio.addEventListener('ended', () => {
+                            this.currentAudio = null;
+                        });
+                    });
+                },
+
+                toggleExpanded(spot) {
+                    if (this.expanded === spot) {
+                        this.expanded = null;
+                    } else {
+                        this.expanded = spot;
+                    }
+                },
+
+                playAudio(spot) {
+                    const audio = this.audioElements[spot];
+
+                    if (!audio) return;
+
+                    // 如果当前有音频在播放，先停止
+                    if (this.currentAudio && this.currentAudio !== spot) {
+                        this.audioElements[this.currentAudio].pause();
+                        this.audioElements[this.currentAudio].currentTime = 0;
+                    }
+
+                    if (this.currentAudio === spot) {
+                        // 如果点击的是当前播放的音频，则暂停
+                        audio.pause();
+                        this.currentAudio = null;
+                    } else {
+                        // 播放新音频
+                        audio.play();
+                        this.currentAudio = spot;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
