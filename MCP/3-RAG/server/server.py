@@ -11,7 +11,6 @@ from typing import List
 
 # 第三方库导入
 import faiss
-import numpy as np
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
