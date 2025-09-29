@@ -23,3 +23,8 @@ venv
 .vscode
 
 .ipynb_checkpoints
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
