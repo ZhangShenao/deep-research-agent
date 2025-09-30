@@ -31,7 +31,7 @@ def tool_node(state: PlanState) -> PlanState:
         tool = TOOL_DICT[tool_name]
         if tool is not None:
             tool_call_result = tool.invoke(input=tool_args)
-            print(f"工具执行结果: \n{tool_call_result}")
+            print(f"调用工具: {tool_name}, 执行结果: \n{tool_call_result}")
 
             # 在消息列表中保存工具调用结果
             state["messages"].append(

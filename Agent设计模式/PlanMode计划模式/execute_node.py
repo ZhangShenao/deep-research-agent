@@ -26,7 +26,7 @@ def execute_node(state: PlanState) -> PlanState:
 
     # 调用LLM,执行计划
     resp = LLM_WITH_TOOLS.invoke(input=messages)
-    print(f"计划执行结果: \n{resp}")
+    print(f"计划执行结果: \n{resp.content}")
 
     # 更新状态
     state["messages"].append(resp)
