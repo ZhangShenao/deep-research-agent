@@ -9,7 +9,7 @@
 # ReAct模式提示词
 # 这段Prompt是实现ReAct模式的核心,用于指导模型进行思考、行动、行动输入、暂停、观察的循环
 REACT_PROMPT = """
-You run in a loop of Thought, Action, Action Input, PAUSE, Observation.
+You run in a loop of Thought, Action, Action Input, Pause, Observation.
 At the end of the loop you output an Answer
 Use Thought to describe your thoughts about the question you have been asked.
 Use Action to run one of the actions available to you
@@ -35,7 +35,7 @@ Thought: 我需要调用 get_weather 工具获取天气
 Action: get_weather
 Action Input: {"city": "BeiJing"}
 
-PAUSE
+Pause
 
 You will be called again with this:
 
