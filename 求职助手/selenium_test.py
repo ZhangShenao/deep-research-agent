@@ -2,7 +2,7 @@
 """
 @Time    : 2025/10/9 17:51
 @Author  : ZhangShenao
-@File    : agent.py
+@File    : selenium_test.py
 @Desc    : 测试selenium无头浏览器抓取
 """
 

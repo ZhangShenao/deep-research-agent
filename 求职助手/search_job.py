@@ -34,6 +34,7 @@ UA_LIST = [
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.5845.140 Safari/537.36",
 ]
 
+# Cookie字符串
 COOKIE_STRING = "ab_guid=97927216-d910-4b84-967f-332c98a67229; lastCity=101010100; __g=-; Hm_lvt_194df3105ad7148dcf2b98a91b5e727a=1758850383,1759141048,1759230346,1760059958; HMACCOUNT=8323725EFF9B8906; wt2=DlanWUOXEm54iuCSW97voiqDd6Qod0SbiaeT20HD-uyOkAA4HJig3Dfx5AcF4kXhvhYElDMZCazYsmM3_0o7LdA~~; wbg=0; zp_at=w2U8GHXF1NCCWbldXYJ3sxXa4BuIrZTHjkiwpsCV39w~; __l=l=%2Fwww.zhipin.com%2Fweb%2Fgeek%2Fjobs%3Fcity%3D101010100%26query%3DAgent%25E5%25BC%2580%25E5%258F%2591&r=&g=&s=3&friend_source=0&s=3&friend_source=0; __zp_stoken__=8972fPjvDpsK7wpHCvzgvDwAWCg9CNjs7Klk%2BPi9CPjo%2BOzAwPD47OB5GLknCvsOfXcOjZsOJFUMpOzBDQz5FMD4wGTtEwrxDPTFlwrDDomTDpmHDixLDlsK%2BDX0Kw4nCuyrCpMODD3AsIMOrwr0%2BOUNGe8K5OcOCw7fCvT7DhMOqw4Q7w4c5O0YdKD0LEhRYPTtXTFkLSVtLY2FVCFRVUilGQjwwwonDuCg5EhQNFBUUEg8SFxcVDHp%2FCQsWCw4ADhMOCyg%2BwqLCu8KPxLfDrsSqw6nEnMKaUsKZVcOuwqvDvWHCt2TEgnbCr1jCjMK4wotQTsKpwqfCuFpkwqXCgcK6wrpOwoPCrsKDUFJ1woTCqcOEwr9cw4Jewr9LCBN6CRU6EcOgwq7DgA%3D%3D; __c=1760059958; __a=18554310.1751874177.1759230346.1760059958.767.34.10.759; bst=V2QtkhEub6315gXdJvzxUZLSuw7D3Qxw~~|QtkhEub6315gXdJvzxUZLSuw7DnTxg~~; Hm_lpvt_194df3105ad7148dcf2b98a91b5e727a=1760061424"
 
 
@@ -46,7 +47,11 @@ def set_user_agent():
     return UA_LIST[rand]
 
 
-def set_cookies(browser):  # 在已登录后的网站页面中获取Cookie信息
+def set_cookies(browser: webdriver.Chrome) -> webdriver.Chrome:
+    """
+    在已登录后的网站页面中获取Cookie信息
+    """
+
     # 拆分cookie字符串为键值对列表
     # 添加cookie
     cookie_pairs = COOKIE_STRING.split("; ")
@@ -60,6 +65,10 @@ def set_cookies(browser):  # 在已登录后的网站页面中获取Cookie信息
 
 
 def init_driver() -> webdriver.Chrome:
+    """
+    初始化ChromeDriver
+    """
+
     chromedriver_path = (
         "/Users/zsa/apps/chrome-driver/chromedriver-mac-arm64/chromedriver"
     )
@@ -77,6 +86,7 @@ def init_driver() -> webdriver.Chrome:
     )
 
     options = Options()
+    options.add_argument("--headless")  # 采用无头模式
     options.add_argument("--disable-gpu")  # 禁用GPU渲染
     options.add_argument("--incognito")  # 无痕模式
     options.add_argument(
@@ -99,8 +109,13 @@ def init_driver() -> webdriver.Chrome:
     return driver
 
 
-def listjob_by_keyword(keyword: str, page: int = 1, size: int = 30) -> str:
-    print("listjob")
+def search_job_by_keyword(keyword: str, page: int = 1, size: int = 30) -> str:
+    """
+    根据关键词搜索职位
+    """
+
+    print(f"search job by keyword: {keyword}")
+
     url = JOB_SEARCH_URL.format(
         urlencode({"query": keyword, "city": BEIJING_CITY_CODE})
     )
@@ -114,7 +129,7 @@ def listjob_by_keyword(keyword: str, page: int = 1, size: int = 30) -> str:
     driver.get(url)
     print(f"网站标题: {driver.title}")
     # print(driver.get_cookies())
-    # driver = set_cookies(driver)
+    driver = set_cookies(driver)
     # all_cookies = driver.get_cookies()
     # for cookie in all_cookies:
     #    print(cookie)
@@ -180,13 +195,12 @@ def listjob_by_keyword(keyword: str, page: int = 1, size: int = 30) -> str:
                 job["job_type"],
             )
             ret += job_desc + "\n"
-        print("完成直聘网分析")
+        print("完成职位分析")
         return ret
     else:
-        raise Exception("没有找到任何岗位列表")
+        raise Exception("没有找到任何职位列表")
 
 
 if __name__ == "__main__":
-    print("listjob")
-    ret = listjob_by_keyword("Agent开发")
-    print(ret)
+    result = search_job_by_keyword(keyword="Agent开发")
+    print(result)

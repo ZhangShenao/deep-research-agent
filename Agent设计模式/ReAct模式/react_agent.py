@@ -2,8 +2,8 @@
 """
 @Time    : 2025/9/26 20:08
 @Author  : ZhangShenao
-@File    : react.py
-@Desc    : 基于Prompt实现ReAct Agent
+@File    : react_agent.py
+@Desc    : 基于Prompt+Tool,实现ReAct Agent
 
 ReAct模式:
 Thought -> Action -> Action Input -> Pause -> Observation 的循环
@@ -56,7 +56,7 @@ if __name__ == "__main__":
         resp_text = resp.choices[0].message.content
         print(f"{resp.choices[0].message.content}")
 
-        # 保持对话历史
+        # 保存对话历史
         messages.append(resp.choices[0].message)
 
         # 使用正则匹配的方式,解析最终结果
