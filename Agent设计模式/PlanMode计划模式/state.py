@@ -9,9 +9,10 @@
 from langgraph.graph.message import MessagesState
 
 
-class PlanState(MessagesState):
+class PlanAndExecuteState(MessagesState):
     """
-    计划状态定义
+    计划和执行状态定义
     """
 
     plan: str  # 生成的计划
+    step: int  # 当前步骤

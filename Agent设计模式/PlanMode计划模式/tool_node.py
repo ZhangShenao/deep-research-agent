@@ -6,18 +6,15 @@
 @Desc    : 工具调用节点
 """
 
-from state import PlanState
+from state import PlanAndExecuteState
 from tools import TOOL_DICT
 from langchain_core.messages import ToolMessage
 
 
-def tool_node(state: PlanState) -> PlanState:
+def tool_node(state: PlanAndExecuteState) -> PlanAndExecuteState:
     """
     工具调用节点
     """
-
-    print("=" * 100)
-    print("进入tool_node")
 
     # 获取工具调用信息
     tool_calls = state["messages"][-1].tool_calls
@@ -31,7 +28,7 @@ def tool_node(state: PlanState) -> PlanState:
         tool = TOOL_DICT[tool_name]
         if tool is not None:
             tool_call_result = tool.invoke(input=tool_args)
-            print(f"调用工具: {tool_name}, 执行结果: \n{tool_call_result}")
+            print(f"\n调用工具: {tool_name}\n执行结果: {tool_call_result}")
 
             # 在消息列表中保存工具调用结果
             state["messages"].append(
