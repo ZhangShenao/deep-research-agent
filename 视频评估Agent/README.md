@@ -5,11 +5,11 @@
 ## 目录结构
 
 ```
-对比测试/
+视频评估Agent/
 ├── base_strategy.py          # 策略模式基类
 ├── core_executor.py          # 核心执行流程
 ├── main.py                   # 生成测试主入口
-├── gemini_evaluator.py       # 使用 Gemini 对视频进行评分
+├── video_evaluator.py        # 对视频进行效果评估
 ├── prompt.txt                # 测试数据（角色名称和Prompt）
 ├── pics/                     # 参考图片目录
 ├── fal/                      # Fal模型策略实现
@@ -55,7 +55,7 @@ python main.py --model wavespeed
 
 ## 视频理解评分（Gemini）
 
-基于 Gemini 2.5 Flash 的视频理解，对目录内所有视频进行 5 个维度评分（1~5分）：
+基于 Gemini 2.5 Flash 的视频理解能力，对指定目录内所有视频进行 5 个维度评分（1~5分）：
 - 剧情的信息密度
 - 画面流畅程度
 - 画面质量
@@ -71,10 +71,10 @@ python main.py --model wavespeed
 ```bash
 # 评估某目录下所有视频，并打印平均分
 export GEMINI_API_KEY=your_key
-python gemini_evaluator.py --dir ./fal_with_name
+python video_evaluator.py --dir ./fal_with_name
 
-# 指定模型（可选，默认 gemini-2.5-flash）并保存报告
-python gemini_evaluator.py --dir ./fal_with_name --model gemini-2.5-flash --save-report
+# 指定视频文件目录，并保存报告
+python video_evaluator.py --dir ./fal_with_name --save-report
 ```
 
 ### 环境变量（评分）
