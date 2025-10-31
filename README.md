@@ -22,21 +22,5 @@ pip install -r requirements.txt
  pipreqs .
 ```
 
-# 2. 理论基础
-
-## 2.1 Prompt
-
-## 2.2 Context Engineering
-
-## 2.3 MCP
-
-
-# 3. Agent 设计模式
-
-## 3.1 ReAct —— 经典模式
-
-## 3.2 CodeAct —— 代码模式
-
-## 3.3 Plan Mode —— 计划模式
-
-## 3.4 Reflection Mode —— 反思模式
+# 2. Agent 核心技术
+![Agent 核心技术](Agent 核心技术.png)
