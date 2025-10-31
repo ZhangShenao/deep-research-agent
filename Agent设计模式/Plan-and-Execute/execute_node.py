@@ -43,7 +43,7 @@ def execute_node(state: PlanAndExecuteState) -> PlanAndExecuteState:
 
     # 更新状态,保存执行结果和迭代次数
     state["messages"].append(resp)
-    state["iterations"] = step + 1
+    state["step"] = step + 1
 
     # 返回更新后的状态
     return state
