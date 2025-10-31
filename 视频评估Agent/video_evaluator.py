@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 使用 Gemini 2.5 Flash 对视频进行多维度评分
-- 评分维度（1~5分）：
-  1) 剧情的信息密度
-  2) 画面流畅程度
-  3) 画面质量
-  4) 人物和场景的一致性
-  5) 声音和画面的一致性
+- 评分维度（1~10分，支持小数）：
+  1) 信息密度（Information Density）：剧情传递的信息含量
+  2) 一致性（Consistency）：视频每一帧中的人物和场景是否都保持一致
+  3) 流畅度（Fluency）：视频中人物动作和镜头切换等是否流畅
+  4) 音画同步性（Audio-Visual Synchronization）：视频中的声音和图像是否一致
+  5) 画面质量（Visual Quality）：是否存在丢帧、卡顿等画面质量问题
 - 返回每个视频的 JSON 评分结果（包含各维度分数、打分原因、总分）
 - 指定目录后，批量评估并输出所有视频的平均分
 
@@ -39,28 +39,29 @@ SUPPORTED_EXTS = {
 }
 
 EVAL_PROMPT = (
-    "你是一个严格的视频评估专家。请基于视频内容，从以下5个维度给出1~5的整数分，并给出简要原因：\n"
-    "1) 剧情的信息密度\n"
-    "2) 画面流畅程度\n"
-    "3) 画面质量\n"
-    "4) 人物和场景的一致性\n"
-    "5) 声音和画面的一致性\n\n"
-    "请只输出 JSON，字段为：{\n"
-    '  "info_density": int,\n'
-    '  "motion_smoothness": int,\n'
-    '  "visual_quality": int,\n'
-    '  "character_scene_consistency": int,\n'
-    '  "audio_visual_alignment": int,\n'
+    "你是一个严格的视频评估专家。请基于视频内容，从以下5个维度给出1~10的分数（支持小数），并给出简要原因：\n\n"
+    "1) 信息密度：剧情传递的信息含量\n"
+    "2) 一致性：视频每一帧中的人物和场景是否都保持一致\n"
+    "3) 流畅度：视频中人物动作和镜头切换等是否流畅\n"
+    "4) 音画同步性：视频中的声音和图像是否一致\n"
+    "5) 画面质量：是否存在丢帧、卡顿等画面质量问题\n\n"
+    "请只输出 JSON，字段为：\n"
+    "{\n"
+    '  "information_density": float,\n'
+    '  "consistency": float,\n'
+    '  "fluency": float,\n'
+    '  "audio_visual_synchronization": float,\n'
+    '  "visual_quality": float,\n'
     '  "reasons": {\n'
-    '     "info_density": string,\n'
-    '     "motion_smoothness": string,\n'
-    '     "visual_quality": string,\n'
-    '     "character_scene_consistency": string,\n'
-    '     "audio_visual_alignment": string\n'
+    '    "information_density": string,\n'
+    '    "consistency": string,\n'
+    '    "fluency": string,\n'
+    '    "audio_visual_synchronization": string,\n'
+    '    "visual_quality": string\n'
     "  },\n"
-    '  "total": int\n'
+    '  "total": float\n'
     "}\n\n"
-    "注意：所有分数必须是1到5的整数，总分为五项分数之和（范围5~25）。"
+    "注意：所有分数必须在1.0到10.0之间（支持小数）。总分为五项分数之和（范围5.0~50.0）。"
 )
 
 
@@ -192,11 +193,11 @@ def aggregate_scores(results: List[Dict[str, Any]]) -> Tuple[Dict[str, float], f
         return {}, 0.0
 
     dims = [
-        "info_density",
-        "motion_smoothness",
+        "information_density",
+        "consistency",
+        "fluency",
+        "audio_visual_synchronization",
         "visual_quality",
-        "character_scene_consistency",
-        "audio_visual_alignment",
     ]
 
     sums = {k: 0.0 for k in dims}
@@ -261,8 +262,10 @@ def main() -> None:
             res = evaluate_single_video(client, args.model, vp)
             all_results.append(res)
             print(
-                f"  -> total={res.get('total')} | info_density={res.get('info_density')} "
-                f"| motion_smoothness={res.get('motion_smoothness')} | visual_quality={res.get('visual_quality')}"
+                f"  -> total={res.get('total')} | information_density={res.get('information_density')} "
+                f"| consistency={res.get('consistency')} | fluency={res.get('fluency')} "
+                f"| audio_visual_synchronization={res.get('audio_visual_synchronization')} "
+                f"| visual_quality={res.get('visual_quality')}"
             )
         except Exception as e:
             print(f"  评估失败: {e}")
