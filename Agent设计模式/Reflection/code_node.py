@@ -45,13 +45,19 @@ def code_node(state: CodeAndReflectionState) -> CodeAndReflectionState:
             optimization_suggestion=state["optimization_suggestion"],
         )
 
-    # 调用LLM,生成代码
-    code = LLM.invoke(prompt).content
+    # 流式调用LLM,生成代码
+    print(f"\n【第 {iterations + 1} 轮迭代】代码生成结果: ")
+    code = ""
+    for chunk in LLM.stream(prompt):
+        content = chunk.content
+        if content:
+            code += content
+            print(content, end="", flush=True)
+    print()  # 换行
 
     # 更新状态
     state["current_code"] = code
     state["iterations"] = iterations + 1
-    print(f"\n【第 {iterations + 1} 轮迭代】代码生成结果: \n{code}")
 
     # 返回更新后的状态
     return state
