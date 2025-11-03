@@ -28,3 +28,6 @@ venv
 __pycache__/
 *.py[cod]
 *$py.class
+
+# 所有的.DS_Store文件
+.DS_Store
