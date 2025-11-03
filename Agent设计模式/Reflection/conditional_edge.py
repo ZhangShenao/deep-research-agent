@@ -1,22 +1,19 @@
 # -*- coding: utf-8 -*-
 """
-@Time    : 2025/10/9 13:32
+@Time    : 2025/11/3 13:32
 @Author  : ZhangShenao
-@File    : conditional_node.py
-@Desc    : 条件节点
+@File    : conditional_edge.py
+@Desc    : 条件边
 """
 
 from state import CodeAndReflectionState
-from llm import LLM
-from prompt import REFLECTION_PROMPT
-from langchain_core.messages import SystemMessage
 from langgraph.graph import END
 from reflection_node import NO_OPTIMIZATION_SUGGESTION
 
 
-def conditional_node(state: CodeAndReflectionState) -> str:
+def conditional_edge(state: CodeAndReflectionState) -> str:
     """
-    条件节点
+    条件边
     """
 
     # 如果优化建议为空,则结束流程

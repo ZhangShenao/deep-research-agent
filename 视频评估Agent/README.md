@@ -18,7 +18,9 @@
 │   └── strategy.py
 ├── wan/                      # 阿里万象模型策略实现
 │   └── strategy.py
-└── wavespeed/                # WaveSpeed模型策略实现
+├── wavespeed/                # WaveSpeed模型策略实现
+│   └── strategy.py
+└── ltx2/                     # LTX-2模型策略实现
     └── strategy.py
 ```
 
@@ -39,11 +41,14 @@ python main.py --model wan
 
 # 使用WaveSpeed模型
 python main.py --model wavespeed
+
+# 使用LTX-2模型
+python main.py --model ltx2
 ```
 
 ### 参数说明
 
-- `--model`: 选择视频生成模型，可选值：`fal`、`sora2`、`wan`、`wavespeed`
+- `--model`: 选择视频生成模型，可选值：`fal`、`sora2`、`wan`、`wavespeed`、`ltx2`
 - `--hide-name`: 可选参数，如果指定则隐藏角色名（替换为"this character"）
 
 ### 环境变量配置（生成）
@@ -52,6 +57,7 @@ python main.py --model wavespeed
 - Sora2: `OPENAI_API_KEY`
 - Wan（阿里万象）: `DASHSCOPE_API_KEY`
 - WaveSpeed: `WAVESPEED_API_KEY`
+- LTX-2: `LTX_API_KEY`
 
 ## 视频理解评分（Gemini）
 
@@ -71,10 +77,10 @@ python main.py --model wavespeed
 ```bash
 # 评估某目录下所有视频，并打印平均分
 export GEMINI_API_KEY=your_key
-python video_evaluator.py --dir ./fal_with_name
+python video_evaluator.py --dir ./sora
 
 # 指定视频文件目录，并保存报告
-python video_evaluator.py --dir ./fal_with_name --save-report
+python video_evaluator.py --dir ./sora --save-report
 ```
 
 ### 环境变量（评分）
