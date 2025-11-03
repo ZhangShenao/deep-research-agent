@@ -42,19 +42,27 @@ def reflection_and_optimization_node(
     current_code = state["current_code"]
     user_query = state["user_query"]
 
-    # 调用LLM,生成反思与优化建议
+    # 流式调用LLM,生成反思与优化建议
     prompt = SYSTEM_PROMPT.format(
         current_code=current_code,
         user_query=user_query,
     )
-    optimization_suggestion = LLM.invoke(prompt).content
+    
+    optimization_suggestion = ""
+    print(f"\n【第 {state["iterations"]} 轮迭代】反思与优化建议: ", end="", flush=True)
+    
+    for chunk in LLM.stream(prompt):
+        content = chunk.content
+        if content:
+            optimization_suggestion += content
+            print(content, end="", flush=True)
+    print()  # 换行
+    
     if "无需优化" in optimization_suggestion:
+        # 无需优化时重新打印
         print(NO_OPTIMIZATION_SUGGESTION)
         state["optimization_suggestion"] = NO_OPTIMIZATION_SUGGESTION
     else:
-        print(
-            f"\n【第 {state["iterations"] + 1} 轮迭代】反思与优化建议: \n{optimization_suggestion}"
-        )
         state["optimization_suggestion"] = optimization_suggestion
 
     # 返回更新后的状态
