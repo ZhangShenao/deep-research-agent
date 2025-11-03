@@ -17,6 +17,7 @@ from sora2.strategy import Sora2Strategy
 from wan.strategy import WanStrategy
 from wavespeed.strategy import WaveSpeedStrategy
 from ltx2.strategy import LTX2Strategy
+from gaga.strategy import GagaStrategy
 
 
 def main():
@@ -25,7 +26,7 @@ def main():
     parser.add_argument(
         "--model",
         type=str,
-        choices=["fal", "sora2", "wan", "wavespeed", "ltx2"],
+        choices=["fal", "sora2", "wan", "wavespeed", "ltx2", "gaga"],
         required=True,
         help="选择视频生成模型",
     )
@@ -50,6 +51,8 @@ def main():
             strategy = WaveSpeedStrategy()
         elif model_name == "ltx2":
             strategy = LTX2Strategy()
+        elif model_name == "gaga":
+            strategy = GagaStrategy()
         else:
             print(f"未知的模型: {model_name}")
             return

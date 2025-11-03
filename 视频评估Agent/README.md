@@ -20,7 +20,9 @@
 │   └── strategy.py
 ├── wavespeed/                # WaveSpeed模型策略实现
 │   └── strategy.py
-└── ltx2/                     # LTX-2模型策略实现
+├── ltx2/                     # LTX-2模型策略实现
+│   └── strategy.py
+└── gaga/                     # Gaga模型策略实现
     └── strategy.py
 ```
 
@@ -44,11 +46,14 @@ python main.py --model wavespeed
 
 # 使用LTX-2模型
 python main.py --model ltx2
+
+# 使用Gaga模型
+python main.py --model gaga
 ```
 
 ### 参数说明
 
-- `--model`: 选择视频生成模型，可选值：`fal`、`sora2`、`wan`、`wavespeed`、`ltx2`
+- `--model`: 选择视频生成模型，可选值：`fal`、`sora2`、`wan`、`wavespeed`、`ltx2`、`gaga`
 - `--hide-name`: 可选参数，如果指定则隐藏角色名（替换为"this character"）
 
 ### 环境变量配置（生成）
@@ -58,6 +63,7 @@ python main.py --model ltx2
 - Wan（阿里万象）: `DASHSCOPE_API_KEY`
 - WaveSpeed: `WAVESPEED_API_KEY`
 - LTX-2: `LTX_API_KEY`
+- Gaga: `GAGA_API_KEY`
 
 ## 视频理解评分（Gemini）
 
