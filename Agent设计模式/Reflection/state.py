@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-@Time    : 2025/10/9 13:32
+@Time    : 2025/11/3 13:32
 @Author  : ZhangShenao
 @File    : state.py
 @Desc    : 状态定义
 """
 
-from langgraph.graph.message import MessagesState
 from typing import TypedDict
 
 
 class CodeAndReflectionState(TypedDict):
     """
-    代码和反思状态定义
+    代码与反思状态定义
     """
 
     user_query: str  # 用户提问

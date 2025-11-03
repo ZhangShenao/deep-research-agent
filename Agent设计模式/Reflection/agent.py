@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-@Time    : 2025/10/9 13:32
+@Time    : 2025/11/3 13:32
 @Author  : ZhangShenao
 @File    : agent.py
-@Desc    : ReflectionMode反思模式主Agent
+@Desc    : Reflectio反思模式主Agent
 """
 
 from langgraph.graph import START, StateGraph
@@ -11,7 +11,8 @@ from langgraph.graph.state import CompiledStateGraph
 from state import CodeAndReflectionState
 from code_node import code_node
 from reflection_node import reflection_and_optimization_node
-from conditional_node import conditional_node
+from conditional_edge import conditional_edge
+from langgraph.graph import END
 
 
 def build_agent() -> CompiledStateGraph:
@@ -30,11 +31,22 @@ def build_agent() -> CompiledStateGraph:
     graph.add_edge(START, "code_node")
     graph.add_edge("code_node", "reflection_and_optimization_node")
     graph.add_conditional_edges(
-        source="reflection_and_optimization_node", path=conditional_node
+        source="reflection_and_optimization_node",
+        path=conditional_edge,
+        path_map={
+            "code_node": "code_node",
+            END: END,
+        },
     )
 
-    # 编译Graph图并返回
-    return graph.compile()
+    # 编译Agent
+    agent = graph.compile()
+
+    # 打印Agent节点结构图,并保存到本地
+    agent.get_graph().draw_mermaid_png(output_file_path="./agent.png")
+
+    # 返回编译后的Agent
+    return agent
 
 
 def run_agent(agent: CompiledStateGraph, user_query: str) -> str:
@@ -59,7 +71,7 @@ if __name__ == "__main__":
     agent: CompiledStateGraph = build_agent()
 
     # 运行Agent
-    result = run_agent(agent, "帮我用python帮我实现快速排序算法")
+    result = run_agent(agent, "帮我写一段python代码，计算1~10000的累加和")
 
-    print("Agent运行结果:")
+    print("\n\nAgent运行结果:")
     print(result)
