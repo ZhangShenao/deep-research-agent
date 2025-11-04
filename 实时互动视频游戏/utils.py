@@ -165,13 +165,16 @@ def concatenate_videos(video_paths: list, output_path: str) -> bool:
                     video_escaped = video.replace("'", "'\"'\"'")
                     f.write(f"file '{video_escaped}'\n")
             
-            # 使用ffmpeg拼接视频，使用H.264编码（浏览器兼容）
+            # 使用ffmpeg拼接视频，确保保留音频
+            # 先尝试直接复制流（最快，保留原始音频）
             cmd = [
                 'ffmpeg',
                 '-f', 'concat',
                 '-safe', '0',
                 '-i', str(list_file),
-                '-c', 'copy',  # 先尝试直接复制流（最快）
+                '-c:v', 'copy',  # 复制视频流
+                '-c:a', 'copy',  # 复制音频流（保留原始音频）
+                '-map', '0',  # 映射所有流
                 '-y',  # 覆盖输出文件
                 str(output_path)
             ]
@@ -183,18 +186,22 @@ def concatenate_videos(video_paths: list, output_path: str) -> bool:
                 check=False
             )
             
-            # 如果直接复制失败（编码不一致），重新编码
+            # 如果直接复制失败（编码不一致），重新编码但保留音频
             if result.returncode != 0:
-                print("直接复制流失败，使用重新编码...")
+                print("直接复制流失败，使用重新编码（保留音频）...")
                 cmd = [
                     'ffmpeg',
                     '-f', 'concat',
                     '-safe', '0',
                     '-i', str(list_file),
                     '-c:v', 'libx264',  # H.264视频编码
-                    '-c:a', 'aac',  # AAC音频编码（如果有音频）
+                    '-c:a', 'aac',  # AAC音频编码（确保音频存在）
+                    '-b:a', '128k',  # 音频比特率
+                    '-map', '0:v:0',  # 映射视频流
+                    '-map', '0:a:0?',  # 映射音频流（如果存在）
                     '-preset', 'medium',
                     '-crf', '23',  # 质量参数
+                    '-shortest',  # 以最短流为准（避免音频视频不同步）
                     '-y',
                     str(output_path)
                 ]
@@ -222,6 +229,9 @@ def concatenate_videos(video_paths: list, output_path: str) -> bool:
             print(f"ffmpeg方法失败: {e}，使用OpenCV方法")
         
         # 使用OpenCV方法（备用方案）
+        # 注意：OpenCV只处理视频帧，不处理音频，会丢失音频
+        print("警告：使用OpenCV方法，音频将被丢失。建议安装ffmpeg以保留音频。")
+        
         # 读取第一个视频获取属性
         first_video = cv2.VideoCapture(valid_videos[0])
         if not first_video.isOpened():
