@@ -7,6 +7,7 @@
   3) 流畅度（Fluency）：视频中人物动作和镜头切换等是否流畅
   4) 音画同步性（Audio-Visual Synchronization）：视频中的声音和图像是否一致
   5) 画面质量（Visual Quality）：是否存在丢帧、卡顿等画面质量问题
+  6) 物理规律遵循（Physics Compliance）：画面是否遵循物理规律
 - 返回每个视频的 JSON 评分结果（包含各维度分数、打分原因、总分）
 - 指定目录后，批量评估并输出所有视频的平均分
 
@@ -39,12 +40,13 @@ SUPPORTED_EXTS = {
 }
 
 EVAL_PROMPT = (
-    "你是一个严格的视频评估专家。请基于视频内容，从以下5个维度给出1~10的分数（支持小数），并给出简要原因：\n\n"
+    "你是一个严格的视频评估专家。请基于视频内容，从以下6个维度给出1~10的分数（支持小数），并给出简要原因：\n\n"
     "1) 信息密度：剧情传递的信息含量\n"
     "2) 一致性：视频每一帧中的人物和场景是否都保持一致\n"
     "3) 流畅度：视频中人物动作和镜头切换等是否流畅\n"
     "4) 音画同步性：视频中的声音和图像是否一致\n"
-    "5) 画面质量：是否存在丢帧、卡顿等画面质量问题\n\n"
+    "5) 画面质量：是否存在丢帧、卡顿等画面质量问题\n"
+    "6) 物理规律遵循：画面是否遵循物理规律\n\n"
     "请只输出 JSON，字段为：\n"
     "{\n"
     '  "information_density": float,\n'
@@ -52,16 +54,18 @@ EVAL_PROMPT = (
     '  "fluency": float,\n'
     '  "audio_visual_synchronization": float,\n'
     '  "visual_quality": float,\n'
+    '  "physics_compliance": float,\n'
     '  "reasons": {\n'
     '    "information_density": string,\n'
     '    "consistency": string,\n'
     '    "fluency": string,\n'
     '    "audio_visual_synchronization": string,\n'
-    '    "visual_quality": string\n'
+    '    "visual_quality": string,\n'
+    '    "physics_compliance": string\n'
     "  },\n"
     '  "total": float\n'
     "}\n\n"
-    "注意：所有分数必须在1.0到10.0之间（支持小数）。总分为五项分数之和（范围5.0~50.0）。"
+    "注意：所有分数必须在1.0到10.0之间（支持小数）。总分为六项分数之和（范围6.0~60.0）。"
 )
 
 
@@ -198,6 +202,7 @@ def aggregate_scores(results: List[Dict[str, Any]]) -> Tuple[Dict[str, float], f
         "fluency",
         "audio_visual_synchronization",
         "visual_quality",
+        "physics_compliance",
     ]
 
     sums = {k: 0.0 for k in dims}
@@ -265,7 +270,8 @@ def main() -> None:
                 f"  -> total={res.get('total')} | information_density={res.get('information_density')} "
                 f"| consistency={res.get('consistency')} | fluency={res.get('fluency')} "
                 f"| audio_visual_synchronization={res.get('audio_visual_synchronization')} "
-                f"| visual_quality={res.get('visual_quality')}"
+                f"| visual_quality={res.get('visual_quality')} "
+                f"| physics_compliance={res.get('physics_compliance')}"
             )
         except Exception as e:
             print(f"  评估失败: {e}")
@@ -295,7 +301,7 @@ def main() -> None:
         }
         report_path = os.path.join(
             target_dir,
-            f"gemini_eval_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
+            f"video_quality_eval_report_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json",
         )
         try:
             with open(report_path, "w", encoding="utf-8") as f:
