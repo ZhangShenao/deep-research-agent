@@ -65,16 +65,17 @@ python main.py --model gaga
 - LTX-2: `LTX_API_KEY`
 - Gaga: `GAGA_API_KEY`
 
-## 视频理解评分（Gemini）
+## 视频质量评估
 
-基于 Gemini 2.5 Flash 的视频理解能力，对指定目录内所有视频进行 5 个维度评分（1~5分）：
-- 剧情的信息密度
-- 画面流畅程度
-- 画面质量
-- 人物和场景的一致性
-- 声音和画面的一致性
+基于 Gemini 2.5 Flash 的视频理解能力，对指定目录内所有视频进行 6 个维度评分（1~10分，支持小数）：
+- 信息密度（Information Density）：剧情传递的信息含量
+- 一致性（Consistency）：视频每一帧中的人物和场景是否都保持一致
+- 流畅度（Fluency）：视频中人物动作和镜头切换等是否流畅
+- 音画同步性（Audio-Visual Synchronization）：视频中的声音和图像是否一致
+- 画面质量（Visual Quality）：是否存在丢帧、卡顿等画面质量问题
+- 物理规律遵循（Physics Compliance）：画面是否遵循物理规律
 
-模型生成每个视频的 JSON 结果（包含各维度分数、原因与总分），并计算总体平均分。
+模型生成每个视频的 JSON 结果（包含各维度分数、原因与总分），并计算总体平均分。总分范围为 6.0~60.0 分。
 
 参考文档：`https://ai.google.dev/gemini-api/docs/video-understanding?hl=zh-cn`
 
@@ -94,7 +95,7 @@ python video_evaluator.py --dir ./sora --save-report
 
 ### 输出
 - 终端打印每个视频的评分摘要与总体平均分
-- 若加 `--save-report`，会在目标目录生成 `gemini_eval_report_YYYYMMDD_HHMMSS.json`
+- 若加 `--save-report`，会在目标目录生成 `video_quality_eval_report__YYYYMMDD_HHMMSS.json`
 
 ## 执行流程（生成）
 
