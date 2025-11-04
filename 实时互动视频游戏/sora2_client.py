@@ -1,28 +1,20 @@
 # -*- coding: utf-8 -*-
 """
-Sora2视频生成策略实现
+Sora2视频生成客户端
 """
 import os
 from typing import Dict, Any, Optional
-
-import dotenv
-
-dotenv.load_dotenv()
-
+from dotenv import load_dotenv
 from openai import OpenAI
 
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent.parent))
-from base_strategy import VideoGenerationStrategy
+load_dotenv()
 
 
-class Sora2Strategy(VideoGenerationStrategy):
-    """Sora2视频生成策略"""
+class Sora2Client:
+    """Sora2视频生成客户端"""
 
     def __init__(self):
-        """初始化Sora2策略"""
+        """初始化Sora2客户端"""
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
     def generate_video(
@@ -67,7 +59,6 @@ class Sora2Strategy(VideoGenerationStrategy):
 
             if status == "completed":
                 # 获取视频URL（OpenAI API需要下载）
-                # 这里返回一个特殊标记，表示需要调用download方法
                 return {
                     "status": "completed",
                     "video_url": f"openai_video:{video_id}",  # 特殊标记
