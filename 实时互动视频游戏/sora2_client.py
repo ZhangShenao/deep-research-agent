@@ -80,6 +80,29 @@ class Sora2Client:
                 "error": f"获取结果失败: {str(e)}",
             }
 
+    def remix_video(
+        self, video_id: str, prompt: str, reference_image_path: Optional[str] = None
+    ) -> Dict[str, Any]:
+        """使用remix方法生成视频（基于已有视频）"""
+        try:
+            # 构建API调用参数
+            remix_params = {
+                "video_id": video_id,
+                "prompt": prompt,
+            }
+
+            video = self.client.videos.remix(**remix_params)
+            new_video_id = video.id
+
+            return {"video_id": new_video_id, "status": "pending", "error": None}
+
+        except Exception as e:
+            return {
+                "video_id": None,
+                "status": "failed",
+                "error": f"Remix任务失败: {str(e)}",
+            }
+
     def download_video(self, video_url: str, save_path: str) -> bool:
         """下载视频"""
         try:

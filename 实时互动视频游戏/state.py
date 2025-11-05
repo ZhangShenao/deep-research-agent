@@ -18,6 +18,7 @@ class GameState(TypedDict):
     storyboard_shots: Optional[list]  # 分镜列表（每个分镜的详细描述）
     reference_image_path: Optional[str]  # 参考图片路径（上一段视频的最后一帧）
     video_path: Optional[str]  # 生成的视频路径
+    last_video_id: Optional[str]  # 上一次生成的视频ID（用于remix）
     current_step: str  # 当前执行的步骤（story_continuation, storyboard, extract_frame, video_generation）
     error: Optional[str]  # 错误信息
 
