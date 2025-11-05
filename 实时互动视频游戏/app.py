@@ -29,10 +29,12 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+
 # 获取或生成session_id（用于数据隔离）
 def get_session_id() -> str:
     """获取或生成唯一的session_id"""
     import uuid
+
     # 如果session_state中已有session_id，直接返回
     if "session_id" not in st.session_state:
         # 生成新的唯一ID
@@ -54,6 +56,7 @@ if "game_state" not in st.session_state:
         "storyboard_shots": None,
         "reference_image_path": None,
         "video_path": None,
+        "last_video_id": None,  # 上一次生成的视频ID（用于remix）
         "current_step": "idle",
         "error": None,
     }
@@ -201,9 +204,15 @@ def display_video():
             if st.button("🎬 生成完整视频", type="primary", use_container_width=True):
                 with st.spinner("正在拼接所有视频..."):
                     # 按顺序拼接视频（video_list已经按顺序保存）
-                    session_id = st.session_state.game_state.get("session_id", "default")
+                    session_id = st.session_state.game_state.get(
+                        "session_id", "default"
+                    )
                     output_path = str(
-                        Path(__file__).parent / "data" / session_id / "videos" / "full_video.mp4"
+                        Path(__file__).parent
+                        / "data"
+                        / session_id
+                        / "videos"
+                        / "full_video.mp4"
                     )
                     success = concatenate_videos(
                         st.session_state.video_list, output_path
@@ -231,7 +240,11 @@ def display_video():
             # 检查是否有完整视频文件但未加载到状态中
             session_id = st.session_state.game_state.get("session_id", "default")
             default_full_video = (
-                Path(__file__).parent / "data" / session_id / "videos" / "full_video.mp4"
+                Path(__file__).parent
+                / "data"
+                / session_id
+                / "videos"
+                / "full_video.mp4"
             )
             if default_full_video.exists():
                 st.session_state.full_video_path = str(default_full_video)
