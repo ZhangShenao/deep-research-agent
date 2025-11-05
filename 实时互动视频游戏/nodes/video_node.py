@@ -69,9 +69,10 @@ def video_generation_node(state: GameState) -> GameState:
             
             if status == "completed":
                 # 视频生成完成，下载视频
-                video_index = get_next_video_index()
-                ensure_data_dir()
-                video_path = str(Path(__file__).parent.parent / "data" / "videos" / f"video_{video_index:04d}.mp4")
+                session_id = state.get("session_id", "default")
+                video_index = get_next_video_index(session_id)
+                ensure_data_dir(session_id)
+                video_path = str(Path(__file__).parent.parent / "data" / session_id / "videos" / f"video_{video_index:04d}.mp4")
                 
                 success = sora2_client.download_video(status_result["video_url"], video_path)
                 
