@@ -147,8 +147,9 @@ def storyboard_node_stream(state: GameState, stream_placeholder=None):
             }
         
         # 保存分镜脚本
-        storyboard_index = get_next_story_index()
-        save_storyboard(json.dumps(storyboard_data, ensure_ascii=False), storyboard_index)
+        session_id = state.get("session_id", "default")
+        storyboard_index = get_next_story_index(session_id)
+        save_storyboard(json.dumps(storyboard_data, ensure_ascii=False), storyboard_index, session_id)
         
         # 更新状态
         return {
@@ -207,8 +208,9 @@ def storyboard_node(state: GameState) -> GameState:
             }
         
         # 保存分镜脚本
-        storyboard_index = get_next_story_index()
-        save_storyboard(json.dumps(storyboard_data, ensure_ascii=False), storyboard_index)
+        session_id = state.get("session_id", "default")
+        storyboard_index = get_next_story_index(session_id)
+        save_storyboard(json.dumps(storyboard_data, ensure_ascii=False), storyboard_index, session_id)
         
         # 更新状态
         return {

@@ -29,10 +29,24 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
+# 获取或生成session_id（用于数据隔离）
+def get_session_id() -> str:
+    """获取或生成唯一的session_id"""
+    import uuid
+    # 如果session_state中已有session_id，直接返回
+    if "session_id" not in st.session_state:
+        # 生成新的唯一ID
+        st.session_state.session_id = str(uuid.uuid4())
+    return st.session_state.session_id
+
+
 # 初始化会话状态
 if "game_state" not in st.session_state:
     worldview = get_default_worldview()
+    # 确保session_id已生成
+    session_id = get_session_id()
     st.session_state.game_state = {
+        "session_id": session_id,
         "messages": [],
         "story_context": worldview,
         "latest_story": None,
@@ -43,10 +57,10 @@ if "game_state" not in st.session_state:
         "current_step": "idle",
         "error": None,
     }
-    st.session_state.show_worldview = True
-    st.session_state.video_index = 0
-    st.session_state.video_list = []  # 保存所有生成的视频路径
-    # st.session_state.cover_image_path = None  # 封面图路径（已注释）
+else:
+    # 确保game_state中的session_id与session_state中的保持一致
+    if "session_id" not in st.session_state.game_state:
+        st.session_state.game_state["session_id"] = get_session_id()
 
 if "show_worldview" not in st.session_state:
     st.session_state.show_worldview = True
@@ -187,8 +201,9 @@ def display_video():
             if st.button("🎬 生成完整视频", type="primary", use_container_width=True):
                 with st.spinner("正在拼接所有视频..."):
                     # 按顺序拼接视频（video_list已经按顺序保存）
+                    session_id = st.session_state.game_state.get("session_id", "default")
                     output_path = str(
-                        Path(__file__).parent / "data" / "videos" / "full_video.mp4"
+                        Path(__file__).parent / "data" / session_id / "videos" / "full_video.mp4"
                     )
                     success = concatenate_videos(
                         st.session_state.video_list, output_path
@@ -214,8 +229,9 @@ def display_video():
             st.markdown("---")
         else:
             # 检查是否有完整视频文件但未加载到状态中
+            session_id = st.session_state.game_state.get("session_id", "default")
             default_full_video = (
-                Path(__file__).parent / "data" / "videos" / "full_video.mp4"
+                Path(__file__).parent / "data" / session_id / "videos" / "full_video.mp4"
             )
             if default_full_video.exists():
                 st.session_state.full_video_path = str(default_full_video)
@@ -302,8 +318,9 @@ def process_user_input(user_input: str):
 
 def main():
     """主函数"""
-    # 确保数据目录存在
-    ensure_data_dir()
+    # 确保数据目录存在（使用session_id）
+    session_id = st.session_state.game_state.get("session_id", "default")
+    ensure_data_dir(session_id)
 
     # 显示世界观（首次）
     display_worldview()

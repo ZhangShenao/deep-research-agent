@@ -9,49 +9,50 @@ from typing import Optional
 import cv2
 
 
-def ensure_data_dir():
+def ensure_data_dir(session_id: str = "default"):
     """确保数据目录存在"""
-    base_dir = Path(__file__).parent / "data"
+    base_dir = Path(__file__).parent / "data" / session_id
     dirs = ["story", "videos", "images", "storyboards"]
     for d in dirs:
         (base_dir / d).mkdir(parents=True, exist_ok=True)
 
 
-def save_story(story: str, index: int) -> str:
+def save_story(story: str, index: int, session_id: str = "default") -> str:
     """保存故事到文件"""
-    ensure_data_dir()
-    file_path = Path(__file__).parent / "data" / "story" / f"story_{index:04d}.txt"
+    ensure_data_dir(session_id)
+    file_path = Path(__file__).parent / "data" / session_id / "story" / f"story_{index:04d}.txt"
     with open(file_path, "w", encoding="utf-8") as f:
         f.write(story)
     return str(file_path)
 
 
-def save_storyboard(storyboard: str, index: int) -> str:
+def save_storyboard(storyboard: str, index: int, session_id: str = "default") -> str:
     """保存分镜脚本到文件"""
-    ensure_data_dir()
-    file_path = Path(__file__).parent / "data" / "storyboards" / f"storyboard_{index:04d}.json"
+    ensure_data_dir(session_id)
+    file_path = Path(__file__).parent / "data" / session_id / "storyboards" / f"storyboard_{index:04d}.json"
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(json.loads(storyboard), f, ensure_ascii=False, indent=2)
     return str(file_path)
 
 
-def extract_last_frame(video_path: str, output_path: Optional[str] = None) -> Optional[str]:
+def extract_last_frame(video_path: str, output_path: Optional[str] = None, session_id: str = "default") -> Optional[str]:
     """
     从视频中提取最后一帧作为图片
     
     Args:
         video_path: 视频文件路径
         output_path: 输出图片路径（可选）
+        session_id: 会话ID，用于数据隔离
     
     Returns:
         图片路径，如果失败返回None
     """
     try:
-        ensure_data_dir()
+        ensure_data_dir(session_id)
         if output_path is None:
             # 自动生成输出路径
             video_name = Path(video_path).stem
-            output_path = str(Path(__file__).parent / "data" / "images" / f"{video_name}_last_frame.jpg")
+            output_path = str(Path(__file__).parent / "data" / session_id / "images" / f"{video_name}_last_frame.jpg")
         
         # 打开视频
         cap = cv2.VideoCapture(video_path)
@@ -86,10 +87,10 @@ def extract_last_frame(video_path: str, output_path: Optional[str] = None) -> Op
         return None
 
 
-def get_next_video_index() -> int:
+def get_next_video_index(session_id: str = "default") -> int:
     """获取下一个视频索引"""
-    ensure_data_dir()
-    video_dir = Path(__file__).parent / "data" / "videos"
+    ensure_data_dir(session_id)
+    video_dir = Path(__file__).parent / "data" / session_id / "videos"
     existing_files = list(video_dir.glob("video_*.mp4"))
     if not existing_files:
         return 0
@@ -103,10 +104,10 @@ def get_next_video_index() -> int:
     return max(indices) + 1 if indices else 0
 
 
-def get_next_story_index() -> int:
+def get_next_story_index(session_id: str = "default") -> int:
     """获取下一个故事索引"""
-    ensure_data_dir()
-    story_dir = Path(__file__).parent / "data" / "story"
+    ensure_data_dir(session_id)
+    story_dir = Path(__file__).parent / "data" / session_id / "story"
     existing_files = list(story_dir.glob("story_*.txt"))
     if not existing_files:
         return 0

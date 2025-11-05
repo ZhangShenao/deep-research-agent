@@ -60,8 +60,9 @@ def story_continuation_node_stream(state: GameState, stream_placeholder=None):
         updated_story_context = f"{story_context}\n\n{latest_story}"
         
         # 保存故事
-        story_index = get_next_story_index()
-        save_story(latest_story, story_index)
+        session_id = state.get("session_id", "default")
+        story_index = get_next_story_index(session_id)
+        save_story(latest_story, story_index, session_id)
         
         # 更新状态
         return {
@@ -112,8 +113,9 @@ def story_continuation_node(state: GameState) -> GameState:
         updated_story_context = f"{story_context}\n\n{latest_story}"
         
         # 保存故事
-        story_index = get_next_story_index()
-        save_story(latest_story, story_index)
+        session_id = state.get("session_id", "default")
+        story_index = get_next_story_index(session_id)
+        save_story(latest_story, story_index, session_id)
         
         # 更新状态
         return {

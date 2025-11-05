@@ -23,7 +23,8 @@ def extract_frame_node(state: GameState) -> GameState:
         
         if previous_video_path and Path(previous_video_path).exists():
             # 提取最后一帧
-            reference_image_path = extract_last_frame(previous_video_path)
+            session_id = state.get("session_id", "default")
+            reference_image_path = extract_last_frame(previous_video_path, session_id=session_id)
             
             if reference_image_path:
                 return {

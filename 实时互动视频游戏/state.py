@@ -10,6 +10,7 @@ class GameState(TypedDict):
     """
     游戏状态定义
     """
+    session_id: str  # 会话ID，用于数据隔离
     messages: Annotated[list, add_messages]  # 对话历史
     story_context: str  # 当前故事背景和上下文
     latest_story: Optional[str]  # 最新续写的剧情
