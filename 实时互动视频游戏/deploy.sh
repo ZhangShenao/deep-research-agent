@@ -13,12 +13,6 @@ echo "=========================================="
 echo "实时互动视频游戏 - 部署脚本"
 echo "=========================================="
 
-# 检查Docker是否安装
-if ! command -v docker &> /dev/null; then
-    echo "❌ Docker未安装，请先安装Docker"
-    echo "参考 DEPLOY.md 中的安装步骤"
-    exit 1
-fi
 
 # 检查.env文件
 if [ ! -f .env ]; then
