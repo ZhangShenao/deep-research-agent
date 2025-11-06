@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 """
-@Time    : 2025/10/22 13:32
+@Time    : 2025/11/6 13:32
 @Author  : ZhangShenao
 @File    : conditional_node.py
-@Desc    : 条件节点
+@Desc    : 条件边
 """
 
 from langgraph.graph import END
 from langgraph.graph.message import MessagesState
 
 
-def conditional_node(state: MessagesState) -> str:
+def conditional_edge(state: MessagesState) -> str:
     """
-    条件节点，根据最后一条消息的类型，决定下一步执行哪个节点
+    条件边: 根据最后一条消息的类型，决定下一步执行哪个节点
     """
 
     # 如果最后一条消息不是工具调用消息，说明LLM直接生成了回复，则结束流程

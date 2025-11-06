@@ -30,9 +30,11 @@ def ask_human(question: str) -> None:
     pass
 
 
+# 工具列表
 TOOLS = [
     get_product_price,
     ask_human,
 ]
 
+# 工具字典
 TOOL_DICT = {tool.name: tool for tool in TOOLS}
