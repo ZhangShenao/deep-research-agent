@@ -12,18 +12,19 @@ from langgraph.graph.message import MessagesState
 from llm_node import llm_node
 from tool_node import tool_node
 from human_node import human_node
-from conditional_node import conditional_node
+from conditional_edge import conditional_edge
 from langgraph.checkpoint.memory import MemorySaver
 from langchain_core.messages import SystemMessage, HumanMessage
 import sys
 import io
 from langgraph.types import Command
 import asyncio
+from langgraph.graph import END
 
 
 SYSTEM_PROMPT = """
-你是一个电商后台管理员，根据用户的要求回答相关的商品价格和库存信息。
-如果有需要，可以调用ask_human工具，进一步向人类提问。
+你是一位专业的电商客服，请回答用户关于商品价格相关的问题。
+如果有任何不确定的信息，可以调用ask_human工具，进一步向人类发起提问。
 """
 
 
@@ -42,7 +43,15 @@ async def build_agent() -> CompiledStateGraph:
 
     # 添加Edge边
     graph.add_edge(START, "llm_node")
-    graph.add_conditional_edges(source="llm_node", path=conditional_node)
+    graph.add_conditional_edges(
+        source="llm_node",
+        path=conditional_edge,
+        path_map={
+            "tool_node": "tool_node",
+            "human_node": "human_node",
+            END: END,
+        },
+    )
     graph.add_edge("tool_node", "llm_node")
     graph.add_edge("human_node", "llm_node")
 
@@ -51,8 +60,14 @@ async def build_agent() -> CompiledStateGraph:
     # 默认采用MemorySaver内存机制
     memory = MemorySaver()
 
-    # 编译Graph图并返回
-    return graph.compile(checkpointer=memory)
+    # 编译Agent
+    agent = graph.compile(checkpointer=memory)
+
+    # 打印Agent节点结构图,并保存到本地
+    agent.get_graph().draw_mermaid_png(output_file_path="./human_in_the_loop_agent.png")
+
+    # 返回编译后的Agent
+    return agent
 
 
 async def run_agent(user_query: str) -> str:
@@ -86,6 +101,6 @@ async def run_agent(user_query: str) -> str:
 
 
 if __name__ == "__main__":
-    result = asyncio.run(run_agent(user_query="帮我查下商品的实际价格"))
-    print("Agent运行结果:")
+    result = asyncio.run(run_agent(user_query="帮我查下商品多少钱？"))
+    print("\n\nAgent运行结果: \n")
     print(result)

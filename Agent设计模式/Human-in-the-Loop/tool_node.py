@@ -16,7 +16,7 @@ async def tool_node(state: MessagesState) -> MessagesState:
     工具调用节点
     """
 
-    # 获取最后一条工具消息
+    # 获取最新一条工具消息
     tool_message = state["messages"][-1]
     if tool_message.tool_calls is None:
         return state

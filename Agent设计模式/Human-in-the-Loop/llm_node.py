@@ -14,6 +14,7 @@ async def llm_node(state: MessagesState) -> MessagesState:
     """
     LLM节点
     """
+
     # 调用LLM,获取结果
     resp = await LLM_WITH_TOOLS.ainvoke(input=state["messages"])
     print(f"\nLLM回答: \n{resp.content}")
