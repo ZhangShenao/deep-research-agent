@@ -23,4 +23,4 @@ pip install -r requirements.txt
 ```
 
 # 2. Agent 核心技术
-![Agent 核心技术](Agent核心技术.png)
+![Agent 核心技术](./Agent核心技术.png)
