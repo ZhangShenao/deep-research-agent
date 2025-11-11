@@ -2,8 +2,8 @@
 """
 @Time    : 2025/11/11 14:00
 @Author  : ZhangShenao
-@File    : gen_video.py
-@Desc    : 生成视频
+@File    : fusion_video.py
+@Desc    : 多主体参考生成视频
 """
 
 import os
