@@ -22,7 +22,9 @@
 │   └── strategy.py
 ├── ltx2/                     # LTX-2模型策略实现
 │   └── strategy.py
-└── gaga/                     # Gaga模型策略实现
+├── gaga/                     # Gaga模型策略实现
+│   └── strategy.py
+└── pixverse_v55/             # PixVerse V5.5模型策略实现
     └── strategy.py
 ```
 
@@ -49,11 +51,17 @@ python main.py --model ltx2
 
 # 使用Gaga模型
 python main.py --model gaga
+
+# 使用PixVerse V5.5模型
+python main.py --model pixverse-v5.5
+
+# 使用PixVerse V5.5模型，隐藏角色名（替换为"this character"）
+python main.py --model pixverse-v5.5 --hide-name
 ```
 
 ### 参数说明
 
-- `--model`: 选择视频生成模型，可选值：`fal`、`sora2`、`wan`、`wavespeed`、`ltx2`、`gaga`
+- `--model`: 选择视频生成模型，可选值：`fal`、`sora2`、`wan`、`wavespeed`、`ltx2`、`gaga`、`pixverse-v5.5`
 - `--hide-name`: 可选参数，如果指定则隐藏角色名（替换为"this character"）
 
 ### 环境变量配置（生成）
@@ -64,6 +72,7 @@ python main.py --model gaga
 - WaveSpeed: `WAVESPEED_API_KEY`
 - LTX-2: `LTX_API_KEY`
 - Gaga: `GAGA_API_KEY`
+- PixVerse V5.5: `PIXVERSE_API_KEY`
 
 ## 视频质量评估
 
@@ -108,11 +117,13 @@ python video_evaluator.py --dir ./sora --save-report
 ## 输出结果（生成）
 
 ### 视频文件
-- `{model_name}_with_name/` - 保留角色名模式
-- `{model_name}_hidden_name/` - 隐藏角色名模式
+- `{model_name}_with_name/` - 保留角色名模式（大部分模型）
+- `{model_name}_hidden_name/` - 隐藏角色名模式（大部分模型）
+- `videos/pixverse-v5.5/` - PixVerse V5.5 模型的输出目录（统一目录，不区分是否隐藏角色名）
 
 ### 测试报告
-- `{model_name}_*/report_YYYYMMDD_HHMMSS.txt`
+- `{model_name}_*/report_YYYYMMDD_HHMMSS.txt` - 大部分模型的报告
+- `videos/pixverse-v5.5/report_YYYYMMDD_HHMMSS.txt` - PixVerse V5.5 模型的报告
 
 ## 设计说明
 

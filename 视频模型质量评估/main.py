@@ -18,6 +18,7 @@ from wan.strategy import WanStrategy
 from wavespeed.strategy import WaveSpeedStrategy
 from ltx2.strategy import LTX2Strategy
 from gaga.strategy import GagaStrategy
+from pixverse_v55.strategy import PixVerseV55Strategy
 
 
 def main():
@@ -26,7 +27,7 @@ def main():
     parser.add_argument(
         "--model",
         type=str,
-        choices=["fal", "sora2", "wan", "wavespeed", "ltx2", "gaga"],
+        choices=["fal", "sora2", "wan", "wavespeed", "ltx2", "gaga", "pixverse-v5.5"],
         required=True,
         help="选择视频生成模型",
     )
@@ -43,23 +44,35 @@ def main():
     try:
         if model_name == "fal":
             strategy = FalStrategy()
+            custom_output_dir = None
         elif model_name == "sora2":
             strategy = Sora2Strategy()
+            custom_output_dir = None
         elif model_name == "wan":
             strategy = WanStrategy()
+            custom_output_dir = None
         elif model_name == "wavespeed":
             strategy = WaveSpeedStrategy()
+            custom_output_dir = None
         elif model_name == "ltx2":
             strategy = LTX2Strategy()
+            custom_output_dir = None
         elif model_name == "gaga":
             strategy = GagaStrategy()
+            custom_output_dir = None
+        elif model_name == "pixverse-v5.5":
+            strategy = PixVerseV55Strategy()
+            custom_output_dir = "videos/pixverse-v5.5"
         else:
             print(f"未知的模型: {model_name}")
             return
 
         # 创建执行器并运行测试
         executor = VideoTestExecutor(
-            strategy=strategy, model_name=model_name, hide_name=hide_name
+            strategy=strategy, 
+            model_name=model_name, 
+            hide_name=hide_name,
+            custom_output_dir=custom_output_dir
         )
 
         executor.run_batch_test()
