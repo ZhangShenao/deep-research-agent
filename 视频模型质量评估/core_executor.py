@@ -18,7 +18,8 @@ class VideoTestExecutor:
         strategy: VideoGenerationStrategy,
         model_name: str,
         hide_name: bool = False,
-        base_dir: Optional[str] = None
+        base_dir: Optional[str] = None,
+        custom_output_dir: Optional[str] = None
     ):
         """
         初始化执行器
@@ -28,6 +29,7 @@ class VideoTestExecutor:
             model_name: 模型名称（用于目录命名）
             hide_name: 是否隐藏角色名（替换为"this character"）
             base_dir: 基础目录路径（默认为当前脚本目录）
+            custom_output_dir: 自定义输出目录（如果提供，将使用此目录而不是默认格式）
         """
         self.strategy = strategy
         self.model_name = model_name
@@ -35,8 +37,16 @@ class VideoTestExecutor:
         self.base_dir = base_dir or os.path.dirname(os.path.abspath(__file__))
         
         # 确定输出目录名称
-        output_suffix = "hidden_name" if hide_name else "with_name"
-        self.output_dir = os.path.join(self.base_dir, f"{model_name}_{output_suffix}")
+        if custom_output_dir:
+            # 如果提供了自定义输出目录，使用它（可以是相对路径或绝对路径）
+            if os.path.isabs(custom_output_dir):
+                self.output_dir = custom_output_dir
+            else:
+                self.output_dir = os.path.join(self.base_dir, custom_output_dir)
+        else:
+            # 否则使用默认格式
+            output_suffix = "hidden_name" if hide_name else "with_name"
+            self.output_dir = os.path.join(self.base_dir, f"{model_name}_{output_suffix}")
         os.makedirs(self.output_dir, exist_ok=True)
         
         # 统计信息
