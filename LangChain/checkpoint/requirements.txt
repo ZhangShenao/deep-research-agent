@@ -1,0 +1,18 @@
+# LangGraph Checkpoint 演示项目依赖
+
+# LangChain 核心
+langchain>=0.3.0
+langchain-openai>=0.2.0
+langchain-core>=0.3.0
+
+# LangGraph
+langgraph>=0.2.0
+langgraph-checkpoint>=2.0.0
+
+# MongoDB
+pymongo>=4.6.0
+motor>=3.3.0  # 异步 MongoDB 驱动
+
+# 其他
+python-dotenv>=1.0.0
+
