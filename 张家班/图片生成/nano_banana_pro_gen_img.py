@@ -21,14 +21,26 @@ load_dotenv()
 # 初始化Gemini客户端
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
-# 生成图片
+# 生成图片的Prompt
 prompt = """
-未来科技风格的数字控制室可视化场景，展示AI Agent的记忆与状态管理系统。画面中央是一条水平延伸的发光全息时间轴，上面标记着多个发光的检查点节点，代表状态快照。多条半透明的数据线程像神经通路一样分支出去，每条都带有飘浮的线程ID标识。画面一侧，一个人类剪影通过悬浮的交互界面与系统进行交互（人机协作）。时间旅行通过弯曲的箭头回溯到之前的检查点节点来呈现。青色和品红色的数据流连接到底部的圆柱形数据库结构。整个场景沐浴在深蓝色和电紫色的环境光中，配有全息HUD元素、背景电路图案和飘浮的JSON代码片段。超现代科幻美学，8K分辨率，电影级光影，数字艺术风格。
+帮我创作一幅 Multi-Agent 的系统架构图，描述如下系统：
+1. 具体业务为一个旅游规划的多智能体项目：
+2. 由一个 Customer Agent 作为 Controller Agent ，引导用户对话，进行意图识别，并调度下面2个子 Agent
+3. Weather Sub-Agent ，绑定了 get_weather 工具，用于查询指定城市的天气
+4. Ticket Sub-Agent，绑定了 get_train_ticket 工具，用于查询出发地到目的地的火车票价
+5. 整体执行过程通过控制台执行，以 Stream 流式方式打印执行效果
+6. 整个项目使用共享的 MongoDB 作为 Checkpoint 
+
+整体风格简约大气，强调科技感与未来感。
+帮我生成完整的图片。
 """
 
+generation_config = types.GenerateContentConfig(
+    response_modalities=["IMAGE"],
+    image_config=types.ImageConfig(aspect_ratio="9:16"),
+)
 response = client.models.generate_content(
-    model="gemini-3-pro-image-preview",
-    contents=[prompt],
+    model="gemini-3-pro-image-preview", contents=[prompt], config=generation_config
 )
 
 # 保存图片
@@ -37,4 +49,4 @@ for part in response.parts:
         print(part.text)
     elif part.inline_data is not None:
         image = part.as_image()
-        image.save("generated_image.png")
+        image.save("multi-agent-system-architecture.png")
