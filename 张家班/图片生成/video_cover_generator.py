@@ -485,7 +485,7 @@ def generate_cover_and_replace_frames(
 # 使用示例
 if __name__ == "__main__":
     # 视频文件路径（请替换为实际路径）
-    VIDEO_PATH = "/Users/zsa/Desktop/AGI/DeepResearch智能体/deep-research-agent/张家班/图片生成/猫狗抢牛排大战.mp4"
+    VIDEO_PATH = "/Users/zsa/Desktop/AGI/DeepResearch智能体/deep-research-agent/张家班/图片生成/橘猫修仙记.mp4"
 
     # 自定义提示词（可选）- 针对宠物/搞笑类视频优化
     CUSTOM_PROMPT = """
