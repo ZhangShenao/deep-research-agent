@@ -66,14 +66,94 @@ SYSTEM_PROMPT = """
 # 定义Agent的最大迭代次数，避免出现无限循环
 MAX_ITERATIONS = 10
 
-if __name__ == "__main__":
-    # 记录迭代次数
+
+def execute_action(action: dict) -> dict:
+    """
+    执行指定的动作并返回结果
+
+    Args:
+        action: 包含 tool_name 和 args 的字典
+
+    Returns:
+        包含执行结果或错误信息的字典
+    """
+    tool_name = action["tool_name"]
+    args = action["args"]
+
+    if tool_name == "list_files":
+        result = {"result": list_files()}
+    elif tool_name == "read_file":
+        result = {"result": read_file(args["file_name"])}
+    elif tool_name == "error":
+        result = {"error": args["message"]}
+    elif tool_name == "terminate":
+        # terminate 工具不执行实际操作，仅用于终止循环
+        result = {}
+    else:
+        result = {"error": "Unknown action: " + tool_name}
+
+    return result
+
+
+def update_memory(memory: list, response: str, result: dict) -> None:
+    """
+    更新对话记忆，添加智能体响应和执行结果
+
+    Args:
+        memory: 对话记忆列表
+        response: 智能体的响应内容
+        result: 工具执行结果
+    """
+    memory.extend(
+        [
+            {"role": "assistant", "content": response},
+            {"role": "tool", "content": json.dumps(result)},
+        ]
+    )
+
+
+def run_agent_loop(memory: list) -> None:
+    """
+    运行 Agent 循环，处理工具调用和响应
+
+    Args:
+        memory: 对话记忆列表
+    """
     iteration = 0
 
+    while iteration < MAX_ITERATIONS:
+        print(f"【Round {iteration + 1}】Agent 正在思考")
+
+        # 调用LLM,生成响应
+        response = generate_response(messages=memory)
+        print(f"【Round {iteration + 1}】Agent 执行结果: {response}")
+
+        # 解析响应以确定要执行的动作
+        action = parse_action(response)
+
+        # 执行动作
+        if action["tool_name"] == "terminate":
+            print(action["args"]["message"])
+            break  # 终止循环
+
+        # 执行非终止动作
+        result = execute_action(action)
+        print(f"Action result: {result}")
+
+        # 更新对话记忆
+        update_memory(memory, response, result)
+
+        iteration += 1  # 增加迭代计数
+
+
+def main() -> None:
+    """
+    主函数：处理用户输入并启动 Agent 循环
+    """
     # 获取用户任务
     user_task = input("请输入您想让我执行的任务：")
 
-    # 保存Memory记忆
+    # 初始化对话记忆
     memory = [
         {
             "role": "system",
@@ -85,43 +165,9 @@ if __name__ == "__main__":
         },
     ]
 
-    # 执行Agent Loop
-    while iteration < MAX_ITERATIONS:
-        print(f"【Round {iteration + 1}】Agent 正在思考")
+    # 执行 Agent 循环
+    run_agent_loop(memory)
 
-        # 调用LLM,生成响应
-        response = generate_response(messages=memory)
-        print(f"【Round {iteration + 1}】Agent 执行结果: {response}")
 
-        # 解析响应以确定要执行的动作
-        action = parse_action(response)
-        result = "Action executed"  # 默认结果
-
-        # 根据解析出的动作执行相应的工具函数
-        if action["tool_name"] == "list_files":
-            result = {"result": list_files()}
-        elif action["tool_name"] == "read_file":
-            result = {"result": read_file(action["args"]["file_name"])}
-        elif action["tool_name"] == "error":
-            result = {"error": action["args"]["message"]}
-        elif action["tool_name"] == "terminate":
-            print(action["args"]["message"])
-            break  # 终止循环
-        else:
-            result = {"error": "Unknown action: " + action["tool_name"]}
-
-        print(f"Action result: {result}")
-
-        # 更新对话记忆，添加智能体响应和执行结果
-        memory.extend(
-            [
-                {"role": "assistant", "content": response},
-                {"role": "tool", "content": json.dumps(result)},
-            ]
-        )
-
-        # 检查终止条件
-        if action["tool_name"] == "terminate":
-            break
-
-        iteration += 1  # 增加迭代计数
+if __name__ == "__main__":
+    main()
