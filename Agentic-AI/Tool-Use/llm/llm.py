@@ -38,7 +38,7 @@ def generate_response(messages: List[Dict]) -> str:
 
     # 调用智谱AI客户端生成响应
     response = ZHIPU_CLIENT.chat.completions.create(
-        model="glm-4.7",  # 使用智谱GLM-4.7模型
+        model="GLM-4.7-Flash",  # 使用智谱GLM-4.7模型
         messages=messages,  # 传入消息列表
         thinking={
             "type": "false",  # 禁用深度思考模式
@@ -64,7 +64,7 @@ def generate_response_with_tools(
 
     # 调用智谱AI客户端生成响应
     return ZHIPU_CLIENT.chat.completions.create(
-        model="glm-4.7",  # 使用智谱GLM-4.7模型
+        model="GLM-4.7-Flash",  # 使用智谱GLM-4.7模型
         messages=messages,  # 传入消息列表
         thinking={
             "type": "false",  # 禁用深度思考模式
